@@ -185,18 +185,20 @@ static simdjson_php_error_code create_array(simdjson::dom::element element, zval
             }
 
             zend_array *arr = simdjson_init_packed_array(return_value, json_array.size());
-
+#if PHP_VERSION_ID >= 80200
+            ZEND_HASH_FILL_PACKED(arr) {
+                for (simdjson::dom::element child : json_array) {
+                    create_array(child, __fill_val);
+                    ZEND_HASH_FILL_NEXT();
+                }
+            } ZEND_HASH_FILL_END();
+#else
             for (simdjson::dom::element child : json_array) {
                 zval array_element;
                 simdjson_php_error_code error = create_array(child, &array_element);
-                if (UNEXPECTED(error)) {
-                    zval_ptr_dtor(return_value);
-                    ZVAL_NULL(return_value);
-                    return error;
-                }
-                zend_hash_next_index_insert(arr, &array_element);
+                zend_hash_next_index_insert_new(arr, &array_element);
             }
-
+#endif
             break;
         }
         case simdjson::dom::element_type::OBJECT : {
