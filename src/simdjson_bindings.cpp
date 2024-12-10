@@ -162,12 +162,12 @@ static zend_always_inline Bucket *simdjson_zend_hash_str_find_bucket(const HashT
  */
 static zend_always_inline void simdjson_zend_hash_str_add_or_update(HashTable *ht, const char *str, size_t len, zval *pData)
 {
-	uint32_t nIndex;
-	uint32_t idx;
-	Bucket *p;
-	zend_ulong h;
+    uint32_t nIndex;
+    uint32_t idx;
+    Bucket *p;
+    zend_ulong h;
 
-	// Check if array is initialized with proper flags and size
+    // Check if array is initialized with proper flags and size
     // This checks are removed in production code
     ZEND_ASSERT(HT_FLAGS(ht) & ~HASH_FLAG_UNINITIALIZED);
     ZEND_ASSERT(HT_FLAGS(ht) & ~HASH_FLAG_PACKED);
@@ -261,9 +261,11 @@ static simdjson_php_error_code create_array(simdjson::dom::element element, zval
             simdjson_set_zval_to_int64(return_value, element.get_int64().value_unsafe());
             break;
             /* UINT64 is used for positive values exceeding INT64_MAX */
-        case simdjson::dom::element_type::UINT64 : ZVAL_DOUBLE(return_value, (double)element.get_uint64().value_unsafe());
+        case simdjson::dom::element_type::UINT64 :
+            ZVAL_DOUBLE(return_value, (double)element.get_uint64().value_unsafe());
             break;
-        case simdjson::dom::element_type::DOUBLE : ZVAL_DOUBLE(return_value, element.get_double().value_unsafe());
+        case simdjson::dom::element_type::DOUBLE :
+            ZVAL_DOUBLE(return_value, element.get_double().value_unsafe());
             break;
         case simdjson::dom::element_type::BOOL :
             ZVAL_BOOL(return_value, element.get_bool().value_unsafe());
@@ -290,7 +292,7 @@ static simdjson_php_error_code create_array(simdjson::dom::element element, zval
 #else
             for (simdjson::dom::element child : json_array) {
                 zval array_element;
-                simdjson_php_error_code error = create_array(child, &array_element);
+                create_array(child, &array_element);
                 zend_hash_next_index_insert_new(arr, &array_element);
             }
 #endif
@@ -331,9 +333,11 @@ static simdjson_php_error_code create_object(simdjson::dom::element element, zva
             simdjson_set_zval_to_int64(return_value, element.get_int64().value_unsafe());
             break;
             /* UINT64 is used for positive values exceeding INT64_MAX */
-        case simdjson::dom::element_type::UINT64 : ZVAL_DOUBLE(return_value, (double)element.get_uint64().value_unsafe());
+        case simdjson::dom::element_type::UINT64 :
+            ZVAL_DOUBLE(return_value, (double)element.get_uint64().value_unsafe());
             break;
-        case simdjson::dom::element_type::DOUBLE : ZVAL_DOUBLE(return_value, element.get_double().value_unsafe());
+        case simdjson::dom::element_type::DOUBLE :
+            ZVAL_DOUBLE(return_value, element.get_double().value_unsafe());
             break;
         case simdjson::dom::element_type::BOOL :
             ZVAL_BOOL(return_value, element.get_bool().value_unsafe());
