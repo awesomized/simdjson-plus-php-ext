@@ -129,7 +129,101 @@ static zend_always_inline void simdjson_set_zval_to_string(zval *v, const char *
     ZVAL_STRINGL(v, buf, len);
 }
 
+#if PHP_VERSION_ID >= 80200
+// Exact copy of PHP method zend_hash_str_find_bucket that is not exported
+static zend_always_inline Bucket *simdjson_zend_hash_str_find_bucket(const HashTable *ht, const char *str, size_t len, zend_ulong h)
+{
+	uint32_t nIndex;
+	uint32_t idx;
+	Bucket *p, *arData;
+
+	arData = ht->arData;
+	nIndex = h | ht->nTableMask;
+	idx = HT_HASH_EX(arData, nIndex);
+	while (idx != HT_INVALID_IDX) {
+		ZEND_ASSERT(idx < HT_IDX_TO_HASH(ht->nTableSize));
+		p = HT_HASH_TO_BUCKET_EX(arData, idx);
+		if ((p->h == h)
+			 && p->key
+			 && zend_string_equals_cstr(p->key, str, len)) {
+			return p;
+		}
+		idx = Z_NEXT(p->val);
+	}
+	return NULL;
+}
+
+/**
+ * Optimised variant _zend_hash_str_add_or_update_i that removes a lof of redundant checks that are not necessary
+ * when adding new item to initialized known hash array that is already allocated to required size
+ * Requirements:
+ *  - initialized array as zend_hash_real_init_mixed
+ *  - exact size must be known in advance
+ */
+static zend_always_inline void simdjson_zend_hash_str_add_or_update(HashTable *ht, const char *str, size_t len, zval *pData)
+{
+	uint32_t nIndex;
+	uint32_t idx;
+	Bucket *p;
+	zend_ulong h;
+
+	// Check if array is initialized with proper flags and size
+    // This checks are removed in production code
+    ZEND_ASSERT(HT_FLAGS(ht) & ~HASH_FLAG_UNINITIALIZED);
+    ZEND_ASSERT(HT_FLAGS(ht) & ~HASH_FLAG_PACKED);
+    ZEND_ASSERT(ht->nNumUsed < ht->nTableSize);
+
+    // Compute key hash
+    h = zend_inline_hash_func(str, len);
+
+    p = simdjson_zend_hash_str_find_bucket(ht, str, len, h);
+    if (UNEXPECTED(p)) { // Key already exists, replace value
+        zval *data;
+        ZEND_ASSERT(&p->val != pData);
+        data = &p->val;
+        if (ht->pDestructor) {
+            ht->pDestructor(data);
+        }
+        ZVAL_COPY_VALUE(data, pData);
+    } else {
+        idx = ht->nNumUsed++;
+        ht->nNumOfElements++;
+        p = ht->arData + idx;
+        p->key = zend_string_init(str, len, 0); // initialize new string for key
+        p->h = ZSTR_H(p->key) = h;
+        HT_FLAGS(ht) &= ~HASH_FLAG_STATIC_KEYS;
+        ZVAL_COPY_VALUE(&p->val, pData);
+        nIndex = h | ht->nTableMask;
+        Z_NEXT(p->val) = HT_HASH(ht, nIndex);
+        HT_HASH(ht, nIndex) = HT_IDX_TO_HASH(idx);
+	}
+}
+#endif // PHP_VERSION_ID >= 80200
+
+// Initialize mixed array with exact size (in PHP terminology mixed array is hash)
+static zend_always_inline zend_array* simdjson_init_mixed_array(zval *zv, uint32_t size) {
+    zend_array *arr;
+    array_init_size(zv, size);
+    arr = Z_ARR_P(zv);
+ #if PHP_VERSION_ID >= 80200
+    zend_hash_real_init_mixed(arr); // Expect mixed array
+ #endif
+    return arr;
+}
+
 static zend_always_inline void simdjson_add_key_to_symtable(HashTable *ht, const char *buf, size_t len, zval *value) {
+#if PHP_VERSION_ID >= 80200
+    zend_ulong idx;
+    if (UNEXPECTED(ZEND_HANDLE_NUMERIC_STR(buf, len, idx))) {
+        zend_hash_index_update(ht, idx, value); // if index is inter in string format, use integer as index
+    } else if (UNEXPECTED(len <= 1)) {
+        // Use interned string
+        zend_string *key = len == 1 ? ZSTR_CHAR((unsigned char)buf[0]) : ZSTR_EMPTY_ALLOC();
+        zend_hash_update(ht, key, value);
+    } else {
+        simdjson_zend_hash_str_add_or_update(ht, buf, len, value);
+    }
+#else
 #if PHP_VERSION_ID >= 70200
     if (len <= 1) {
         /* Look up the interned string (i.e. not reference counted) */
@@ -144,6 +238,7 @@ static zend_always_inline void simdjson_add_key_to_symtable(HashTable *ht, const
     zend_symtable_update(ht, key, value);
     /* Release the reference counted key */
     zend_string_release_ex(key, 0);
+#endif
 }
 
 static zend_always_inline void simdjson_set_zval_to_int64(zval *zv, const int64_t value) {
@@ -209,19 +304,11 @@ static simdjson_php_error_code create_array(simdjson::dom::element element, zval
                 break;
             }
 
-            zend_array *arr;
-            array_init_size(return_value, json_object.size());
-            arr = Z_ARR_P(return_value);
+            zend_array *arr = simdjson_init_mixed_array(return_value, json_object.size());
 
             for (simdjson::dom::key_value_pair field : json_object) {
                 zval array_element;
-                simdjson_php_error_code error = create_array(field.value, &array_element);
-                if (UNEXPECTED(error)) {
-                    zval_ptr_dtor(return_value);
-                    ZVAL_NULL(return_value);
-                    return error;
-                }
-                /* TODO consider using zend_string_init_existing_interned in php 8.1+ to save memory and time freeing strings. */
+                create_array(field.value, &array_element);
                 simdjson_add_key_to_symtable(arr, field.key.data(), field.key.size(), &array_element);
             }
             break;
