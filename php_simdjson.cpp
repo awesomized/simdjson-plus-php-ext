@@ -123,6 +123,15 @@ static zend_always_inline bool simdjson_validate_depth(zend_long depth, const ch
     return true;
 }
 
+// Free memory allocated by parser if capacity is bigger than 100 MB
+static void simdjson_parser_cleanup() {
+    simdjson_php_parser *parser = SIMDJSON_G(parser);
+    if (parser->parser.capacity() > 100 * 1024 * 1024) {
+        php_simdjson_free_parser(parser);
+        SIMDJSON_G(parser) = NULL;
+    }
+}
+
 PHP_FUNCTION (simdjson_is_valid) {
     zend_string *json = NULL;
     zend_long depth = SIMDJSON_PARSE_DEFAULT_DEPTH;
@@ -137,15 +146,8 @@ PHP_FUNCTION (simdjson_is_valid) {
         RETURN_THROWS();
     }
     simdjson_php_error_code error = php_simdjson_validate(simdjson_get_parser(), ZSTR_VAL(json), ZSTR_LEN(json), depth);
+    simdjson_parser_cleanup();
     ZVAL_BOOL(return_value, !error);
-}
-
-PHP_SIMDJSON_API simdjson_php_error_code php_simdjson_parse_default(const char *json, size_t len, zval *return_value, bool associative, size_t depth) {
-    return php_simdjson_parse(simdjson_get_parser(), json, len, return_value, associative, depth);
-}
-
-PHP_SIMDJSON_API simdjson_php_error_code php_simdjson_validate_default(const char *json, size_t len, size_t depth) {
-    return php_simdjson_validate(simdjson_get_parser(), json, len, depth);
 }
 
 PHP_FUNCTION (simdjson_decode) {
@@ -164,6 +166,7 @@ PHP_FUNCTION (simdjson_decode) {
         RETURN_THROWS();
     }
     simdjson_php_error_code error = php_simdjson_parse(simdjson_get_parser(), ZSTR_VAL(json), ZSTR_LEN(json), return_value, associative, depth);
+    simdjson_parser_cleanup();
     if (error) {
         php_simdjson_throw_jsonexception(error);
         RETURN_THROWS();
@@ -182,6 +185,7 @@ PHP_FUNCTION (simdjson_key_value) {
         RETURN_THROWS();
     }
     simdjson_php_error_code error = php_simdjson_key_value(simdjson_get_parser(), ZSTR_VAL(json), ZSTR_LEN(json), ZSTR_VAL(key), return_value, associative, depth);
+    simdjson_parser_cleanup();
     if (error) {
         php_simdjson_throw_jsonexception(error);
         RETURN_THROWS();
@@ -200,6 +204,7 @@ PHP_FUNCTION (simdjson_key_count) {
         RETURN_THROWS();
     }
     simdjson_php_error_code error = php_simdjson_key_count(simdjson_get_parser(), ZSTR_VAL(json), ZSTR_LEN(json), ZSTR_VAL(key), return_value, depth, throw_if_uncountable);
+    simdjson_parser_cleanup();
     if (error) {
         if (error == SIMDJSON_PHP_ERR_KEY_COUNT_NOT_COUNTABLE && !throw_if_uncountable) {
             RETURN_LONG(0);
@@ -220,6 +225,7 @@ PHP_FUNCTION (simdjson_key_exists) {
         RETURN_THROWS();
     }
     simdjson_php_error_code error = php_simdjson_key_exists(simdjson_get_parser(), ZSTR_VAL(json), ZSTR_LEN(json), ZSTR_VAL(key), depth);
+    simdjson_parser_cleanup();
     switch (error) {
         case simdjson::SUCCESS:
             RETURN_TRUE;
