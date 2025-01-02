@@ -694,7 +694,7 @@ zend_result simdjson_escape_string(smart_str *buf, zend_string *str, simdjson_en
 
 	// Check if string is valid UTF-8 string
 	if (!ZSTR_IS_VALID_UTF8(str)) {
-	    if (EXPECTED(simdjson::validate_utf8(s, len))) {
+	    if (EXPECTED(simdutf::validate_utf8(s, len))) {
 	        // Mark string as valid UTF-8
         	GC_ADD_FLAGS(str, IS_STR_VALID_UTF8);
 	    } else {

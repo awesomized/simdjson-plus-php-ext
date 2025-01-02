@@ -269,7 +269,7 @@ PHP_FUNCTION(simdjson_is_valid_utf8) {
         RETURN_TRUE;
     }
 
-    bool is_ok = simdjson::validate_utf8(ZSTR_VAL(string), ZSTR_LEN(string));
+    bool is_ok = simdutf::validate_utf8(ZSTR_VAL(string), ZSTR_LEN(string));
     if (EXPECTED(is_ok)) {
         // String is UTF-8 valid, so we can also set proper flag
         GC_ADD_FLAGS(string, IS_STR_VALID_UTF8);
