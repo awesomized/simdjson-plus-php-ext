@@ -7,7 +7,7 @@ echo $reflection;
 
 ?>
 --EXPECTF--
-Function [ <internal:simdjson> function simdjson_decode ] {
+Function [ <internal:simdjson_plus> function simdjson_decode ] {
 
   - Parameters [3] {
     Parameter #0 [ <required> string $json ]

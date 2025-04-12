@@ -7,7 +7,7 @@ echo $reflection;
 
 ?>
 --EXPECTF--
-Function [ <internal:simdjson> function simdjson_is_valid ] {
+Function [ <internal:simdjson_plus> function simdjson_is_valid ] {
 
   - Parameters [2] {
     Parameter #0 [ <required> string $json ]

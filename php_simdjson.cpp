@@ -678,13 +678,17 @@ PHP_RSHUTDOWN_FUNCTION (simdjson) {
 PHP_MINFO_FUNCTION (simdjson) {
     php_info_print_table_start();
 
-    php_info_print_table_row(2, "simdjson support", "enabled");
-    php_info_print_table_row(2, "Version", PHP_SIMDJSON_VERSION);
-    php_info_print_table_row(2, "Support", SIMDJSON_SUPPORT_URL);
+    const simdutf::implementation *simdutf_impl = simdutf::get_active_implementation();
+
+    php_info_print_table_row(2, "simdjson-plus", "enabled");
+    php_info_print_table_row(2, "simdjson-plus support", SIMDJSON_PLUS_SUPPORT_URL);
+    php_info_print_table_row(2, "simdjson-plus extension version", PHP_SIMDJSON_PLUS_VERSION);
     php_info_print_table_row(2, "simdjson library version", SIMDJSON_VERSION);
+    php_info_print_table_row(2, "simdjson decoder implementation", simdjson::get_active_implementation()->description().c_str());
+    php_info_print_table_row(2, "simdjson decoder implementation", simdjson_encode_implementation());
     php_info_print_table_row(2, "simdutf library version", SIMDUTF_VERSION);
-    php_info_print_table_row(2, "Decoder implementation", simdjson::get_active_implementation()->description().c_str());
-    php_info_print_table_row(2, "Encoder implementation", simdjson_encode_implementation());
+    php_info_print_table_row(2, "simdutf implementation name", simdutf_impl->name().c_str());
+    php_info_print_table_row(2, "simdutf implementation description", simdutf_impl->description().c_str());
 
     php_info_print_table_end();
 }
@@ -702,14 +706,14 @@ zend_module_dep simdjson_deps[] = {
 zend_module_entry simdjson_module_entry = {
     STANDARD_MODULE_HEADER_EX, NULL,
     simdjson_deps,
-    "simdjson",
+    "simdjson_plus",
     ext_functions,
     PHP_MINIT(simdjson),
     PHP_MSHUTDOWN(simdjson),
     PHP_RINIT(simdjson),
     PHP_RSHUTDOWN(simdjson),
     PHP_MINFO(simdjson),
-    PHP_SIMDJSON_VERSION,
+    PHP_SIMDJSON_PLUS_VERSION,
     PHP_MODULE_GLOBALS(simdjson),
     PHP_GINIT(simdjson),
     NULL,
@@ -720,7 +724,7 @@ zend_module_entry simdjson_module_entry = {
 
 /** {{{ DL support
  */
-#ifdef COMPILE_DL_SIMDJSON
+#ifdef COMPILE_DL_SIMDJSON_PLUS
 #ifdef ZTS
 ZEND_TSRMLS_CACHE_DEFINE();
 #endif

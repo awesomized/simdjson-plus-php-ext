@@ -31,7 +31,7 @@ if test "$PHP_SIMDJSON" != "no"; then
   AC_DEFINE(HAVE_SIMDJSON, 1, [whether simdjson is enabled])
   dnl Disable exceptions because PHP is written in C and loads this C++ module, handle errors manually.
   dnl Disable development checks of C simdjson library in php debug builds (can manually override)
-  PHP_NEW_EXTENSION(simdjson, [
+  PHP_NEW_EXTENSION(simdjson_plus, [
       php_simdjson.cpp                    \
       src/simdjson_decoder.cpp            \
       src/countlut.cpp                    \
@@ -40,7 +40,7 @@ if test "$PHP_SIMDJSON" != "no"; then
       src/simdjson.cpp],
     $ext_shared,, "-std=c++17 -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1", cxx)
 
-  PHP_INSTALL_HEADERS([ext/simdjson], [php_simdjson.h src/simdjson_decoder_defs.h])
+  PHP_INSTALL_HEADERS([ext/simdjson_plus], [php_simdjson.h src/simdjson_decoder_defs.h])
   PHP_ADD_MAKEFILE_FRAGMENT
   PHP_ADD_BUILD_DIR(src, 1)
 fi
