@@ -34,7 +34,7 @@ int(0)
 int(1)
 int(1)
 string(%d) "SimdJsonDecoderException: %d: %s
-string(%d) "SimdJsonDecoderException: 3: The JSON document has an improper structure: missing or superfluous commas, braces, missing keys, etc."
+string(%d) "SimdJsonDecoderException: 3: The JSON document has an improper structure: missing or superfluous commas, braces, missing keys, etc.  This is a fatal and unrecoverable error."
 string(%d) "SimdJsonDecoderException: %d: The input is not valid UTF-8"
 string(%d) "SimdJsonDecoderException: %d: Within strings, some characters must be escaped, we found unescaped characters"
 int(%d)
