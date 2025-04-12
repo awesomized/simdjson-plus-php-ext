@@ -19,9 +19,10 @@ jobs:
         run: "docker build -t simdjsontest -f docker_php${{ matrix.php-version }}-alpine ."
 
       - name: "Show"
-        run: "docker run --rm --env SIMDJSON_HIGH_MEMORY_TESTS=1 simdjsontest php --ri simdjson_json"
+        run: "docker run --rm --env SIMDJSON_HIGH_MEMORY_TESTS=1 simdjsontest php --ri simdjson_plus"
 
   Ubuntu-dev:
+    name: "Ubuntu (dev)"
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
@@ -42,7 +43,6 @@ jobs:
         os: [ubuntu-latest]
         experimental: [false]
     runs-on: ${{ matrix.os }}
-    name: PHP ${{ matrix.php-version }} Test on ${{ matrix.os }}
     continue-on-error: ${{ matrix.experimental }}
     steps:
       - name: "Checkout"
@@ -83,7 +83,7 @@ jobs:
             echo
           done
 
-  Macos:
+  macOS:
     runs-on: macos-latest
     continue-on-error: false
     strategy:
