@@ -43,6 +43,7 @@ jobs:
         os: [ubuntu-latest]
         experimental: [false]
     runs-on: ${{ matrix.os }}
+    name: Ubuntu (${{ matrix.php-version }})
     continue-on-error: ${{ matrix.experimental }}
     steps:
       - name: "Checkout"
