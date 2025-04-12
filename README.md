@@ -7,12 +7,16 @@
 🚀 Blazing-fast JSON encoding and decoding for PHP, powered by the 
 [simdjson project](https://github.com/lemire/simdjson).
 
-*This is a fork of [JakubOnderka/simdjson_php](https://github.com/JakubOnderka/simdjson_php) (which is a fork of [crazyxman/simdjson_php](https://github.com/crazyxman/simdjson_php)), which adds JSON
-encoding support with new optimisations.*
+*This is a fork of [JakubOnderka/simdjson_php](https://github.com/JakubOnderka/simdjson_php) (which is a fork 
+of [crazyxman/simdjson_php](https://github.com/crazyxman/simdjson_php))*
 
 Since the [simdjson](https://pecl.php.net/package/simdjson) PECL extension seems to be unmaintained, or at least slow 
 to [accept PRs for improvements](https://github.com/crazyxman/simdjson_php/pulls), we packaged this up under a new
-name (`simdjson_plus`) to avoid conflicts and published it on Packagist (instead of PECL).
+name (`simdjson_plus`) to avoid naming conflicts and published it on Packagist (instead of PECL) for easier
+installation.
+
+It's a drop-in replacement for the PECL extension, with additional features from JakubOnderka, such as accelerated
+JSON encoding (not just decoding) and optimizations.
 
 ## Performance Comparison: How Fast is simdjson_plus?
 
