@@ -1,0 +1,29 @@
+{
+  "name": "awesome/simdjson_plus",
+  "description": "Blazing-fast JSON encoding and decoding for PHP, powered by the simdjson project.",
+  "type": "php-ext",
+  "keywords": ["json", "encoder", "decoder", "simd"],
+  "homepage": "https://github.com/awesomized/simdjson-plus-php-ext",
+  "license": [
+    "Apache-2.0"
+  ],
+  "support": {
+    "issues": "https://github.com/awesomized/simdjson-plus-php-ext/issues",
+    "source": "https://github.com/awesomized/simdjson-plus-php-ext"
+  },
+  "php-ext": {
+    "extension-name": "simdjson_plus"
+  },
+  "prefer-stable": true,
+  "config": {
+    "sort-packages": true
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-main": "2.0.x-dev"
+    }
+  },
+  "require": {
+    "php": "^8.1"
+  }
+}
