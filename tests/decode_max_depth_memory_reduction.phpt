@@ -28,4 +28,4 @@ Caught SimdJsonDecoderException: The JSON document was too deep (too many nested
 Test depth=134217728:
 array(0) {
 }
-Caught SimdJsonDecoderException: The JSON document has an improper structure: missing or superfluous commas, braces, missing keys, etc.
+Caught SimdJsonDecoderException: The JSON document has an improper structure: missing or superfluous commas, braces, missing keys, etc.  This is a fatal and unrecoverable error.
