@@ -1,35 +1,61 @@
-# simdjson_php
+`awesome/simdjson_plus`
+=======================
 
-🚀 Blazing-fast JSON encoding and decoding for PHP, powered by the [simdjson project](https://github.com/lemire/simdjson).
+[![Build Status](https://github.com/awesomized/simdjson-plus-php-ext/actions/workflows/integration.yml/badge.svg?branch=master)](https://github.com/awesomized/simdjson-plus-php-ext/actions/workflows/integration.yml?query=branch%3Amaster)
+[![Latest Stable Version](https://img.shields.io/packagist/v/awesome/simdjson_plus)](https://packagist.org/packages/awesome/simdjson_plus)
 
-*This is a fork of [crazyxman/simdjson_php](https://github.com/crazyxman/simdjson_php) with new optimisations and encoding support.*
+🚀 Blazing-fast JSON encoding and decoding for PHP, powered by the 
+[simdjson project](https://github.com/lemire/simdjson).
 
-[![Build Status](https://github.com/JakubOnderka/simdjson_php/actions/workflows/integration.yml/badge.svg?branch=master)](https://github.com/JakubOnderka/simdjson_php/actions/workflows/integration.yml?query=branch%3Amaster)
+*This is a fork of [JakubOnderka/simdjson_php](https://github.com/JakubOnderka/simdjson_php) (which is a fork of [crazyxman/simdjson_php](https://github.com/crazyxman/simdjson_php)), which adds JSON
+encoding support with new optimisations.*
 
-## Performance Comparison: How Fast is simdjson_php?
+Since the [simdjson](https://pecl.php.net/package/simdjson) PECL extension seems to be unmaintained, or at least slow 
+to [accept PRs for improvements](https://github.com/crazyxman/simdjson_php/pulls), we packaged this up under a new
+name (`simdjson_plus`) to avoid conflicts and published it on Packagist (instead of PECL).
 
-| Operation             | PHP Built-in | simdjson_php | Speedup  |
-|-----------------------|--------------|--------------|----------|
-| Decode to array       | 1.48 ms      | 0.46 ms      | **3.2×** |
-| Decode to object      | 1.56 ms      | 0.54 ms      | **2.9×** |
-| Encode                | 0.67 ms      | 0.26 ms      | **2.5×** |
-| Encode (pretty print) | 0.83 ms      | 0.31 ms      | **2.6×** |
-| Validate              | 1.37 ms      | 0.22 ms      | **6.2×** |
-| Count items           | 1.51 ms      | 0.16 ms      | **9.4×** |
+## Performance Comparison: How Fast is simdjson_plus?
+
+| Operation             | PHP Built-in | simdjson_plus | Speedup  |
+|-----------------------|--------------|---------------|----------|
+| Decode to array       | 1.48 ms      | 0.46 ms       | **3.2×** |
+| Decode to object      | 1.56 ms      | 0.54 ms       | **2.9×** |
+| Encode                | 0.67 ms      | 0.26 ms       | **2.5×** |
+| Encode (pretty print) | 0.83 ms      | 0.31 ms       | **2.6×** |
+| Validate              | 1.37 ms      | 0.22 ms       | **6.2×** |
+| Count items           | 1.51 ms      | 0.16 ms       | **9.4×** |
 
 Tests were conducted using PHP 8.3 on an [Apple M1 Max](https://en.wikipedia.org/wiki/Apple_M1#M1_Pro_and_M1_Max). For test specification see `TwitterDecodeBench.php` and `TwitterEncoderBench.php`.
 
-Additionally, simdjson_php reduces memory usage compared to `json_decode()`. For example, when decoding twitter.json, memory consumption drops from 3.01 MB to 2.47 MB due to efficient array key deduplication.
+Additionally, simdjson_plus reduces memory usage compared to `json_decode()`. For example, when decoding twitter.json, memory consumption drops from 3.01 MB to 2.47 MB due to efficient array key deduplication.
 
-## Requirement
+## Related SIMD-accelerated PHP extensions
+* [crc_fast](https://packagist.org/packages/awesome/crc_fast) PHP extension for SIMD-accelerated CRC calculations
+  at >100GiB/s.
+* [simdutf](https://packagist.org/packages/awesome/simdutf) PHP extension for Unicode validation and transcoding at
+  billions of characters per second using the [simdutf](https://github.com/simdutf/simdutf) project.
 
-* PHP 8.0+ (PHP 8.2+ recommended for maximum performance)
+## Requirements
+
+* PHP 8.1+ (PHP 8.2+ recommended for maximum performance)
 * g++ (version 7 or better) or clang++ (version 6 or better)
 * A 64-bit system with a command-line shell (e.g., Linux, macOS, FreeBSD)
 
+## Changes
+
+See the [change log](CHANGELOG.md).
+
+## Installing
+
+Use [Composer](https://getcomposer.org) to install this library using [PIE](https://github.com/php/pie):
+
+```bash
+composer install awesome/simdjson-plus
+```
+
 ## Compilation Instructions for Linux
 
-To compile simdjson_php, run the following commands:
+To compile simdjson_plus, run the following commands:
 
 ```bash
 phpize
@@ -42,7 +68,7 @@ make install
 Once installed, add this line to your `php.ini` file:
 
 ```ini
-extension=simdjson.so
+extension=simdjson_plus.so
 ```
 
 ## Usage Examples
@@ -141,7 +167,7 @@ You can also use base64url encoding (RFC 4648 §5) by setting second argument to
 
 ### Encode to stream
 
-For large data sets, simdjson_php provides the `simdjson_encode_to_stream()` function to save data directly to a file or output buffer.
+For large data sets, simdjson_plus provides the `simdjson_encode_to_stream()` function to save data directly to a file or output buffer.
 
 ```php
 $bigStructure = [...];
