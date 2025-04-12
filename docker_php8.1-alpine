@@ -26,4 +26,4 @@ RUN set -xe \
         && make install \
         && make test \
         && rm -rf /tmp/simdjson \
-        && echo "extension=simdjson.so" > /usr/local/etc/php/conf.d/simdjson.ini
+        && echo "extension=simdjson_plus.so" > /usr/local/etc/php/conf.d/simdjson_plus.ini
