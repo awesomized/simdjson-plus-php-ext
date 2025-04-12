@@ -680,9 +680,9 @@ PHP_MINFO_FUNCTION (simdjson) {
 
     const simdutf::implementation *simdutf_impl = simdutf::get_active_implementation();
 
-    php_info_print_table_row(2, "simdjson-plus", "enabled");
-    php_info_print_table_row(2, "simdjson-plus support", SIMDJSON_PLUS_SUPPORT_URL);
-    php_info_print_table_row(2, "simdjson-plus extension version", PHP_SIMDJSON_PLUS_VERSION);
+    php_info_print_table_row(2, "simdjson_plus", "enabled");
+    php_info_print_table_row(2, "simdjson_plus support", SIMDJSON_PLUS_SUPPORT_URL);
+    php_info_print_table_row(2, "simdjson_plus extension version", PHP_SIMDJSON_PLUS_VERSION);
     php_info_print_table_row(2, "simdjson library version", SIMDJSON_VERSION);
     php_info_print_table_row(2, "simdjson decoder implementation", simdjson::get_active_implementation()->description().c_str());
     php_info_print_table_row(2, "simdjson decoder implementation", simdjson_encode_implementation());
