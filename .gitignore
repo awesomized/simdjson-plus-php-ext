@@ -41,3 +41,5 @@ configure.ac
 benchmark/vendor
 composer.lock
 .idea
+.DS_Store
+vendor
