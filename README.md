@@ -1,7 +1,7 @@
 `awesome/simdjson_plus`
 =======================
 
-[![Build Status](https://github.com/awesomized/simdjson-plus-php-ext/actions/workflows/integration.yml/badge.svg?branch=main)](https://github.com/awesomized/simdjson-plus-php-ext/actions/workflows/integration.yml?query=branch%3Amain)
+[![Tests status](https://github.com/awesomized/simdjson-plus-php-ext/workflows/Tests/badge.svg)](https://github.com/awesomized/simdjson-plus-php-ext/actions?query=workflow%3ATests)
 [![Latest Stable Version](https://img.shields.io/packagist/v/awesome/simdjson_plus)](https://packagist.org/packages/awesome/simdjson_plus)
 
 🚀 Blazing-fast JSON encoding and decoding for PHP, powered by the 
