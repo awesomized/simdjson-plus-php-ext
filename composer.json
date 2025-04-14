@@ -1,6 +1,6 @@
 {
   "name": "awesome/simdjson_plus",
-  "description": "Blazing-fast JSON encoding and decoding for PHP, powered by the simdjson project.",
+  "description": "Parsing gigabytes of JSON per second in PHP using the simdjson library.",
   "type": "php-ext",
   "keywords": ["json", "encoder", "decoder", "simd"],
   "homepage": "https://github.com/awesomized/simdjson-plus-php-ext",
